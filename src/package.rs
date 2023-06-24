@@ -61,23 +61,27 @@ impl Package {
     /// Writes the package to a file
     ///
     /// Returns `Err` if the `file` cannot be created
-    pub fn write_to_file(&mut self, file: &str) -> Result<(), Error> {
+    pub fn write_to_file<P: AsRef<Path>>(&mut self, file: P) -> Result<(), Error> {
         self.write_to_file_maybe_timestamp(file, None)
     }
 
     /// Writes the package to a file using a timestamp
     ///
     /// Returns `Err` if the `file` cannot be created
-    pub fn write_to_file_timestamp(&mut self, file: &str, timestamp: f64) -> Result<(), Error> {
+    pub fn write_to_file_timestamp<P: AsRef<Path>>(
+        &mut self,
+        file: P,
+        timestamp: f64,
+    ) -> Result<(), Error> {
         self.write_to_file_maybe_timestamp(file, Some(timestamp))
     }
 
-    fn write_to_file_maybe_timestamp(
+    fn write_to_file_maybe_timestamp<P: AsRef<Path>>(
         &mut self,
-        file: &str,
+        file: P,
         timestamp: Option<f64>,
     ) -> Result<(), Error> {
-        let file = File::create(&file)?;
+        let file = File::create(file)?;
         let db_file = NamedTempFile::new()?.into_temp_path();
 
         let mut conn = Connection::open(&db_file).map_err(database_error)?;

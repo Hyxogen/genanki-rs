@@ -7,6 +7,7 @@ use crate::Error;
 use rusqlite::{params, Transaction};
 use std::collections::HashMap;
 use std::ops::RangeFrom;
+use std::path::Path;
 
 /// A flashcard deck which can be written into an .apkg file.
 #[derive(Clone)]
@@ -140,8 +141,8 @@ impl Deck {
     ///
     /// Package::new(vec![my_deck], vec![])?.write_to_file("output.apkg")?;
     /// ```
-    pub fn write_to_file(&self, file: &str) -> Result<(), Error> {
-        Package::new(vec![self.clone()], vec![])?.write_to_file(file)?;
+    pub fn write_to_file<P: AsRef<Path>>(&self, file: P) -> Result<(), Error> {
+        Package::new(vec![self.clone()], Vec::default())?.write_to_file(file)?;
         Ok(())
     }
 }
