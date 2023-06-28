@@ -146,7 +146,7 @@ impl Package {
             .execute_batch(APKG_COL)
             .map_err(database_error)?;
         for deck in &mut self.decks {
-            deck.write_to_db(&transaction, timestamp, &mut id_gen)?;
+            deck.write_to_db(transaction, timestamp, &mut id_gen)?;
         }
         Ok(())
     }

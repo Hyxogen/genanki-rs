@@ -4,7 +4,7 @@ use std::hash::{Hash, Hasher};
 pub fn guid_for(fields: &Vec<String>) -> String {
     fields
         .iter()
-        .map(|f| u64::to_string(&hash_str(&f)))
+        .map(|f| u64::to_string(&hash_str(f)))
         .collect()
 }
 

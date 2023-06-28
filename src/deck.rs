@@ -59,7 +59,7 @@ impl Deck {
             deck_db_entry_dyn: 0,
             extend_new: 0,
             extend_rev: 50,
-            id: self.id.clone(),
+            id: self.id,
             lrn_today: vec![163, 2],
             deck_db_entry_mod: 1425278051,
             name: self.name.clone(),
@@ -113,7 +113,7 @@ impl Deck {
             )
             .map_err(database_error)?;
         for note in &mut self.notes {
-            note.write_to_db(&transaction, timestamp, self.id, id_gen)?;
+            note.write_to_db(transaction, timestamp, self.id, id_gen)?;
         }
         Ok(())
     }
