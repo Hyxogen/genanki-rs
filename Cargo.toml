@@ -24,4 +24,4 @@ thiserror = "1.0.32"
 anyhow = "1.0.62"
 pyo3 = "0.13.2"
 serial_test = "0.5.1"
-uuid = { version = "0.8", features = ["v4"] }
+uuid = { version = "1.4", features = ["v4"] }
