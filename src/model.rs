@@ -1,6 +1,6 @@
 use crate::builders::Template;
 use crate::db_entries::{Fld, ModelDbEntry, Tmpl};
-use crate::error::{json_error, template_error};
+use crate::error::template_error;
 use crate::{Error, Field};
 use fancy_regex::Regex;
 use ramhorns::Template as RamTemplate;
@@ -230,14 +230,6 @@ impl Model {
             css: self.css.clone(),
             latex_pre: self.latex_pre.clone(),
         })
-    }
-
-    #[allow(dead_code)]
-    pub(super) fn to_json(&mut self, timestamp: f64, deck_id: i64) -> Result<String, Error> {
-        Ok(
-            serde_json::to_string(&self.to_model_db_entry(timestamp, deck_id)?)
-                .map_err(json_error)?,
-        )
     }
 }
 
