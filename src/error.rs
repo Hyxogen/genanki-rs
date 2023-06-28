@@ -72,10 +72,6 @@ pub(crate) fn json_error(e: serde_json::Error) -> Error {
     Error::Template(Box::new(e))
 }
 
-pub(crate) fn template_error(e: ramhorns::Error) -> Error {
-    Error::Template(Box::new(e))
-}
-
 pub(crate) fn zip_error(e: ZipError) -> Error {
     Error::Zip(Box::new(e))
 }
