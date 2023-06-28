@@ -281,8 +281,8 @@ mod tests {
             "Cloze Model",
             vec![Field::new("Text"), Field::new("Extra")],
             vec![Template::new("My Cloze Card")
-                .qfmt("{{cloze:Text}}")
-                .afmt("{{cloze:Text}}<br>{{Extra}}")],
+                .qfmt("{{Text}}")
+                .afmt("{{Text}}<br>{{Extra}}")],
             Some(&css()),
             Some(ModelType::Cloze),
             None,
@@ -297,8 +297,8 @@ mod tests {
             "Multi Field Cloze Model",
             vec![Field::new("Text1"), Field::new("Text2")],
             vec![Template::new("Cloze")
-                .qfmt("{{cloze:Text1}} and {{cloze:Text2}}")
-                .afmt("{{cloze:Text1}} and {{cloze:Text2}}")],
+                .qfmt("{{Text1}} and {{Text2}}")
+                .afmt("{{Text1}} and {{Text2}}")],
             Some(&css()),
             Some(ModelType::Cloze),
             None,
