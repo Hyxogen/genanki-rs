@@ -23,5 +23,5 @@ thiserror = "1.0.32"
 [dev-dependencies]
 anyhow = "1.0.62"
 pyo3 = "0.13.2"
-serial_test = "0.5.1"
-uuid = { version = "0.8", features = ["v4"] }
+serial_test = "2.0.0"
+uuid = { version = "1.4", features = ["v4"] }
