@@ -1,8 +1,9 @@
 use crate::builders::Template;
 use crate::db_entries::{Fld, ModelDbEntry, Tmpl};
+use crate::error::template_error;
 use crate::{Error, Field};
 use fancy_regex::Regex;
-use handlebars::Handlebars;
+use ramhorns::Template as RamTemplate;
 use std::collections::HashMap;
 
 const DEFAULT_LATEX_PRE: &str = r#"
@@ -151,23 +152,18 @@ impl Model {
     }
 
     pub(super) fn req(&self) -> Result<Vec<(usize, String, Vec<usize>)>, Error> {
-        let sentinel = "SeNtInEl";
+        let sentinel = "SeNtInEl".to_string();
         let field_names: Vec<String> = self.fields.iter().map(|field| field.name.clone()).collect();
-        let field_values: HashMap<&str, String> = field_names
+        let field_values = field_names
             .iter()
-            .map(|field| (field.as_str(), format!("{}{}", &field, &sentinel)))
-            .collect();
+            .map(|field| (field.as_str(), format!("{}{}", &field, &sentinel)));
         let mut req = Vec::new();
         for (template_ord, template) in self.templates.iter().enumerate() {
-            let mut handlebars = Handlebars::new();
-            handlebars
-                .register_template_string("template", template.qfmt.clone())
-                .map_err(|err| Error::Template(Box::new(err)))?;
-            let rendered = handlebars
-                .render("template", &field_values)
-                .map_err(|err| Error::Template(Box::new(err)))?;
+            let rendered = RamTemplate::new(template.qfmt.clone())
+                .map_err(template_error)?
+                .render::<HashMap<&str, String>>(&field_values.clone().collect());
             let required_fields = field_values
-                .iter()
+                .clone()
                 .enumerate()
                 .filter(|(_, (_, field))| !contains_other_fields(&rendered, field, &sentinel))
                 .map(|(field_ord, _)| field_ord)
@@ -177,9 +173,9 @@ impl Model {
                 continue;
             }
             let required_fields = field_values
-                .iter()
+                .clone()
                 .enumerate()
-                .filter(|(_, (_, sentinel))| rendered.contains(*sentinel))
+                .filter(|(_, (_, sentinel))| rendered.contains(sentinel))
                 .map(|(field_ord, _)| field_ord)
                 .collect::<Vec<_>>();
             if required_fields.is_empty() {
