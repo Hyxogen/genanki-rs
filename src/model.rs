@@ -1,10 +1,6 @@
 use crate::builders::Template;
 use crate::db_entries::{Fld, ModelDbEntry, Tmpl};
-use crate::error::template_error;
 use crate::{Error, Field};
-use fancy_regex::Regex;
-use ramhorns::Template as RamTemplate;
-use std::collections::HashMap;
 
 const DEFAULT_LATEX_PRE: &str = r#"
 \documentclass[12pt]{article}
@@ -158,30 +154,12 @@ impl Model {
             .iter()
             .map(|field| (field.as_str(), format!("{}{}", &field, &sentinel)));
         let mut req = Vec::new();
-        for (template_ord, template) in self.templates.iter().enumerate() {
-            let rendered = RamTemplate::new(template.qfmt.clone())
-                .map_err(template_error)?
-                .render::<HashMap<&str, String>>(&field_values.clone().collect());
-            let required_fields = field_values
-                .clone()
-                .enumerate()
-                .filter(|(_, (_, field))| !contains_other_fields(&rendered, field, &sentinel))
-                .map(|(field_ord, _)| field_ord)
-                .collect::<Vec<_>>();
-            if !required_fields.is_empty() {
-                req.push((template_ord, "all".to_string(), required_fields));
-                continue;
-            }
-            let required_fields = field_values
-                .clone()
-                .enumerate()
-                .filter(|(_, (_, sentinel))| rendered.contains(sentinel))
-                .map(|(field_ord, _)| field_ord)
-                .collect::<Vec<_>>();
-            if required_fields.is_empty() {
-                return Err(Error::TemplateFormat(template.clone()));
-            }
-            req.push((template_ord, "any".to_string(), required_fields))
+        for template_ord in 0..self.templates.len() {
+            req.push((
+                template_ord,
+                "all".to_string(),
+                (0..field_values.len()).collect(),
+            ));
         }
         Ok(req)
     }
@@ -233,17 +211,6 @@ impl Model {
     }
 }
 
-fn contains_other_fields(rendered: &str, current_field: &str, sentinel: &str) -> bool {
-    Regex::new(&format!(
-        "(?!{field}\\b)\\b(\\w)*{sentinel}+",
-        field = current_field,
-        sentinel = sentinel
-    ))
-    .unwrap()
-    .is_match(rendered)
-    .unwrap()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -277,8 +244,8 @@ mod tests {
             "Cloze Model",
             vec![Field::new("Text"), Field::new("Extra")],
             vec![Template::new("My Cloze Card")
-                .qfmt("{{cloze:Text}}")
-                .afmt("{{cloze:Text}}<br>{{Extra}}")],
+                .qfmt("{{Text}}")
+                .afmt("{{Text}}<br>{{Extra}}")],
             Some(&css()),
             Some(ModelType::Cloze),
             None,
