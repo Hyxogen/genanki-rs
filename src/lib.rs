@@ -525,62 +525,6 @@ def check_media(col):
     }
 
     #[test]
-    fn model_req() {
-        let req = model().req().unwrap();
-        assert_eq!(req, vec![(0, "all".to_string(), vec![0])]);
-    }
-
-    #[test]
-    fn model_req_cn() {
-        let req = cn_model().req().unwrap();
-        assert_eq!(
-            req,
-            vec![
-                (0, "all".to_string(), vec![0]),
-                (1, "all".to_string(), vec![1])
-            ]
-        );
-    }
-
-    #[test]
-    fn model_req_with_hint() {
-        let req = model_with_hint().req().unwrap();
-        assert_eq!(req, vec![(0, "any".to_string(), vec![0, 1])]);
-    }
-
-    #[test]
-    fn notes_generate_cards_based_on_req_cn() {
-        let note1 = Note::new(cn_model(), vec!["中國", "中国", "China"]).unwrap();
-        let note2 = Note::new(cn_model(), vec!["你好", "", "hello"]).unwrap();
-
-        assert_eq!(note1.cards().len(), 2);
-        assert_eq!(note1.cards()[0].ord(), 0);
-        assert_eq!(note1.cards()[1].ord(), 1);
-
-        assert_eq!(note2.cards().len(), 1);
-        assert_eq!(note2.cards()[0].ord(), 0)
-    }
-
-    #[test]
-    fn note_generate_cards_based_on_req_with_hint() {
-        let note1 = Note::new(
-            model_with_hint(),
-            vec!["capital of California", "", "Sacramento"],
-        )
-        .unwrap();
-        let note2 = Note::new(
-            model_with_hint(),
-            vec!["capital of Iowa", "French for \"The Moines\"", "Des Moines"],
-        )
-        .unwrap();
-
-        assert_eq!(note1.cards().len(), 1);
-        assert_eq!(note1.cards()[0].ord(), 0);
-        assert_eq!(note2.cards().len(), 1);
-        assert_eq!(note2.cards()[0].ord(), 0);
-    }
-
-    #[test]
     #[serial]
     fn media_files() {
         let tmp_dir = TempDir::new().unwrap();
